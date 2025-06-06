@@ -1,12 +1,6 @@
 import React from 'react';
 
-type ArticlePageProps = {
-  params: {
-    id: string;
-  };
-};
-
-const ArticlePage = ({ params }: ArticlePageProps) => {
+export default async function ArticlePage({ params }) {
   return (
     <div className="container mx-auto px-6 py-8">
       <h1 className="text-4xl font-bold">Article Title for ID: {params.id}</h1>
@@ -25,6 +19,4 @@ const ArticlePage = ({ params }: ArticlePageProps) => {
       </div>
     </div>
   );
-};
-
-export default ArticlePage; 
+} 
