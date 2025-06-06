@@ -3,6 +3,7 @@
 import { useState, useEffect, ChangeEvent } from 'react'
 import { createClient } from '@/utils/supabase/client'
 import { useRouter, notFound } from 'next/navigation'
+import type { NextPage } from 'next'
 
 // 'articles' 테이블의 스키마에 맞게 이 타입을 수정해야 합니다.
 type Article = {
@@ -12,7 +13,7 @@ type Article = {
   [key: string]: unknown;
 }
 
-export default function EditorPage({ params }: { params: { id: string } }) {
+const EditorPage: NextPage<{ params: { id: string } }> = ({ params }) => {
   const router = useRouter()
   const [article, setArticle] = useState<Article | null>(null)
   const [isSaving, setIsSaving] = useState(false)
@@ -38,7 +39,7 @@ export default function EditorPage({ params }: { params: { id: string } }) {
     }
 
     fetchArticle()
-  }, [params.id, supabase])
+  }, [params.id, supabase, router])
 
   const handleInputChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     if (!article) return
@@ -140,3 +141,5 @@ export default function EditorPage({ params }: { params: { id: string } }) {
     </main>
   )
 }
+
+export default EditorPage
