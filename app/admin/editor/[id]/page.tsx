@@ -7,10 +7,16 @@ type Article = {
   id: string;
   title: string | null;
   content: string | null;
-  [key: string]: unknown;
+  [key: string]: any;
 }
 
-export default async function EditorPage({ params }: { params: { id: string } }) {
+type EditorPageProps = {
+  params: {
+    id: string;
+  };
+};
+
+export default async function EditorPage({ params }: EditorPageProps) {
   const { id } = params
   const supabase = createClient()
 
