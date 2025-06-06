@@ -7,7 +7,7 @@ type Article = {
   id: string;
   title: string | null;
   content: string | null;
-  [key: string]: any;
+  [key: string]: unknown;
 }
 
 type EditorPageProps = {
