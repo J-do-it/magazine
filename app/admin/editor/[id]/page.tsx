@@ -10,7 +10,11 @@ type Article = {
   [key: string]: unknown;
 }
 
-export default async function EditorPage({ params }: { params: { id: string } }) {
+export default async function EditorPage({
+  params,
+}: {
+  params: { id: string };
+}) {
   const { id } = params
   const supabase = createClient()
 
