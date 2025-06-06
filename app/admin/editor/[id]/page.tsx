@@ -14,6 +14,7 @@ type EditorPageProps = {
   params: {
     id: string;
   };
+  searchParams: { [key: string]: string | string[] | undefined };
 };
 
 export default async function EditorPage({ params }: EditorPageProps) {
