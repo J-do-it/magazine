@@ -1,6 +1,6 @@
 import React from 'react';
 
-export default async function ArticlePage({ params }) {
+export default async function ArticlePage({ params }: { params: { id: string } }) {
   return (
     <div className="container mx-auto px-6 py-8">
       <h1 className="text-4xl font-bold">Article Title for ID: {params.id}</h1>
