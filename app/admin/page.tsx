@@ -18,7 +18,7 @@ export default async function AdminPage() {
   if (error) {
     return (
       <div className="flex justify-center items-center h-screen">
-        <p className="text-red-500">게시글을 불러오는 중 오류가 발생했습니다: {error.message}</p>
+        <p className="text-red-500">게시글 불러오는 중 오류가 발생했습니다: {error.message}</p>
       </div>
     )
   }
