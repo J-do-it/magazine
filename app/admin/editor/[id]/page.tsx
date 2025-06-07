@@ -2,10 +2,12 @@
 
 import { useState, useEffect, ChangeEvent } from 'react'
 import { createClient } from '@/utils/supabase/client'
-import { useRouter, notFound } from 'next/navigation'
-import type { NextPage } from 'next'
+import { useParams, useRouter, notFound } from 'next/navigation'
+import { EditorContent, useEditor } from '@tiptap/react'
+import StarterKit from '@tiptap/starter-kit'
+import Link from '@tiptap/extension-link'
+import Youtube from '@tiptap/extension-youtube'
 
-// 'articles' 테이블의 스키마에 맞게 이 타입을 수정해야 합니다.
 type Article = {
   id: string;
   title: string | null;
@@ -13,12 +15,131 @@ type Article = {
   [key: string]: unknown;
 }
 
-const EditorPage: NextPage<{ params: { id: string } }> = ({ params }) => {
+// ---- tiptap 에디터 + 툴바 컴포넌트 ----
+function TiptapEditor({
+  value,
+  onChange,
+}: {
+  value: string;
+  onChange: (value: string) => void;
+}) {
+  const editor = useEditor({
+    extensions: [
+      StarterKit,
+      Link.configure({
+        openOnClick: true,
+        autolink: true,
+        linkOnPaste: true,
+      }),
+      Youtube.configure({
+        width: 640,
+        height: 360,
+        HTMLAttributes: {
+          class: 'mx-auto my-4',
+        },
+      }),
+    ],
+    content: value,
+    onUpdate: ({ editor }) => {
+      onChange(editor.getHTML())
+    },
+    editorProps: {
+      attributes: {
+        class:
+          'prose min-h-[300px] max-h-[1000px] bg-white text-black border border-gray-300 rounded-md px-4 py-3 focus:outline-none',
+      },
+    },
+  })
+
+  if (!editor) return null
+
+  return (
+    <div>
+      {/* 툴바 */}
+      <div className="mb-2 flex flex-wrap gap-1">
+        <button
+          type="button"
+          onClick={() => editor.chain().focus().toggleBold().run()}
+          className={`px-2 py-1 rounded ${editor.isActive('bold') ? 'bg-red-600 text-white' : 'bg-gray-200 text-black'}`}
+        >
+          Bold
+        </button>
+        <button
+          type="button"
+          onClick={() => editor.chain().focus().toggleItalic().run()}
+          className={`px-2 py-1 rounded ${editor.isActive('italic') ? 'bg-red-600 text-white' : 'bg-gray-200 text-black'}`}
+        >
+          Italic
+        </button>
+        <button
+          type="button"
+          onClick={() => editor.chain().focus().toggleHeading({ level: 1 }).run()}
+          className={`px-2 py-1 rounded ${editor.isActive('heading', { level: 1 }) ? 'bg-red-600 text-white' : 'bg-gray-200 text-black'}`}
+        >
+          H1
+        </button>
+        <button
+          type="button"
+          onClick={() => editor.chain().focus().toggleHeading({ level: 2 }).run()}
+          className={`px-2 py-1 rounded ${editor.isActive('heading', { level: 2 }) ? 'bg-red-600 text-white' : 'bg-gray-200 text-black'}`}
+        >
+          H2
+        </button>
+        <button
+          type="button"
+          onClick={() => editor.chain().focus().setHorizontalRule().run()}
+          className="px-2 py-1 rounded bg-gray-200 text-black"
+        >
+          구분선
+        </button>
+        <button
+          type="button"
+          onClick={() => {
+            const url = window.prompt('링크 주소 입력:')
+            if (url) {
+              editor.chain().focus().setLink({ href: url }).run()
+            }
+          }}
+          className={`px-2 py-1 rounded ${editor.isActive('link') ? 'bg-red-600 text-white' : 'bg-gray-200 text-black'}`}
+        >
+          링크
+        </button>
+        <button
+          type="button"
+          onClick={() => editor.chain().focus().unsetLink().run()}
+          className="px-2 py-1 rounded bg-gray-200 text-black"
+        >
+          링크삭제
+        </button>
+        <button
+          type="button"
+          onClick={() => {
+            const url = window.prompt('YouTube 동영상 주소 입력:')
+            if (url) {
+              editor.chain().focus().setYoutubeVideo({ src: url }).run()
+            }
+          }}
+          className="px-2 py-1 rounded bg-gray-200 text-black"
+        >
+          유튜브
+        </button>
+      </div>
+      <EditorContent editor={editor} />
+    </div>
+  )
+}
+// ---------------------------------
+
+const EditorPage = () => {
+  const params = useParams()
   const router = useRouter()
   const [article, setArticle] = useState<Article | null>(null)
   const [isSaving, setIsSaving] = useState(false)
   const [isLoading, setIsLoading] = useState(true)
   const supabase = createClient()
+
+  // 안전하게 id 추출
+  const id = Array.isArray(params.id) ? params.id[0] : params.id
 
   useEffect(() => {
     const fetchArticle = async () => {
@@ -26,7 +147,7 @@ const EditorPage: NextPage<{ params: { id: string } }> = ({ params }) => {
       const { data: articleData, error } = await supabase
         .from('articles')
         .select('*')
-        .eq('id', params.id)
+        .eq('id', id)
         .single()
 
       if (error || !articleData) {
@@ -38,14 +159,22 @@ const EditorPage: NextPage<{ params: { id: string } }> = ({ params }) => {
       setIsLoading(false)
     }
 
-    fetchArticle()
-  }, [params.id, supabase, router])
+    if (id) fetchArticle()
+  }, [id, supabase, router])
 
-  const handleInputChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+  const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
     if (!article) return
     setArticle({
       ...article,
       [e.target.name]: e.target.value,
+    })
+  }
+
+  const handleContentChange = (value: string) => {
+    if (!article) return
+    setArticle({
+      ...article,
+      content: value,
     })
   }
 
@@ -76,29 +205,27 @@ const EditorPage: NextPage<{ params: { id: string } }> = ({ params }) => {
   }
 
   if (!article) {
-    // useEffect에서 notFound()가 호출되었으므로 이 부분은 거의 도달하지 않지만,
-    // 만약을 위해 남겨둡니다.
     return notFound()
   }
 
   return (
-    <main className="flex h-screen w-full bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-gray-100">
+    <main className="flex h-screen w-full bg-black text-white">
       {/* Editor Panel */}
       <div className="w-1/2 h-full flex flex-col p-4">
-        <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6 h-full flex flex-col">
+        <div className="bg-black rounded-lg shadow-md p-6 h-full flex flex-col">
           <div className="flex justify-between items-center mb-6">
-            <h1 className="text-3xl font-bold">에디터</h1>
+            <h1 className="text-3xl font-bold text-white">에디터</h1>
             <button
               onClick={handleSave}
               disabled={isSaving}
-              className="px-6 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed"
+              className="px-6 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {isSaving ? '저장 중...' : '저장'}
             </button>
           </div>
-          
+
           <div className="mb-6">
-            <label htmlFor="title" className="block text-lg font-medium text-gray-700 dark:text-gray-300 mb-2">
+            <label htmlFor="title" className="block text-lg font-medium text-white mb-2">
               제목
             </label>
             <input
@@ -107,21 +234,17 @@ const EditorPage: NextPage<{ params: { id: string } }> = ({ params }) => {
               name="title"
               value={article.title || ''}
               onChange={handleInputChange}
-              className="mt-1 block w-full px-4 py-3 bg-gray-100 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-lg"
+              className="mt-1 block w-full px-4 py-3 bg-white text-black border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-lg"
               placeholder="아티클 제목"
             />
           </div>
           <div className="flex-grow flex flex-col">
-            <label htmlFor="content" className="block text-lg font-medium text-gray-700 dark:text-gray-300 mb-2">
+            <label htmlFor="content" className="block text-lg font-medium text-white mb-2">
               내용
             </label>
-            <textarea
-              id="content"
-              name="content"
+            <TiptapEditor
               value={article.content || ''}
-              onChange={handleInputChange}
-              className="mt-1 block w-full h-full flex-grow px-4 py-3 bg-gray-100 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-lg"
-              placeholder="내용을 입력하세요..."
+              onChange={handleContentChange}
             />
           </div>
         </div>
@@ -129,11 +252,11 @@ const EditorPage: NextPage<{ params: { id: string } }> = ({ params }) => {
 
       {/* Preview Panel */}
       <div className="w-1/2 h-full flex flex-col p-4">
-        <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6 h-full overflow-y-auto">
-          <article className="prose lg:prose-xl dark:prose-invert max-w-none">
-            <h1>{article.title}</h1>
+        <div className="bg-gray-100 rounded-lg shadow-md p-6 h-full overflow-y-auto">
+          <article className="prose lg:prose-xl max-w-none">
+            <h1 dangerouslySetInnerHTML={{ __html: article.title || '' }}></h1>
             <div style={{ whiteSpace: 'pre-wrap' }}>
-              {article.content || ''}
+              <div dangerouslySetInnerHTML={{ __html: article.content || '' }}></div>
             </div>
           </article>
         </div>
