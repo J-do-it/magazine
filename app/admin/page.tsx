@@ -9,7 +9,7 @@ type Article = {
 }
 
 export default async function AdminPage() {
-  const supabase = createClient()
+  const supabase = await createClient()
   const { data: articles, error } = await supabase
     .from('articles')
     .select('id, title')

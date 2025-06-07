@@ -1,13 +1,15 @@
 import React from 'react';
 
-export default async function ArticlePage({ params }: { params: { id: string } }) {
+export default async function ArticlePage({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params;
+  
   return (
     <div className="container mx-auto px-6 py-8">
-      <h1 className="text-4xl font-bold">Article Title for ID: {params.id}</h1>
+      <h1 className="text-4xl font-bold">Article Title for ID: {id}</h1>
       <p className="mt-4 text-gray-600">Published on January 1, 2024</p>
       <div className="mt-8 prose lg:prose-xl max-w-none">
         <p>
-          This is the content of the article with ID <strong>{params.id}</strong>. 
+          This is the content of the article with ID <strong>{id}</strong>. 
           This content can be fetched from a CMS or a database.
         </p>
         <p>
