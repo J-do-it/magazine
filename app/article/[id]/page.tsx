@@ -15,6 +15,7 @@ export default function ArticlePage() {
 
   const [article, setArticle] = useState<any>(null)
   const [isLoading, setIsLoading] = useState(true)
+  const [scrollPercentage, setScrollPercentage] = useState(0)
 
   useEffect(() => {
     if (!id) return
@@ -37,6 +38,24 @@ export default function ArticlePage() {
     fetchArticle()
   }, [id])
 
+  useEffect(() => {
+    const handleScroll = () => {
+      const scrollableHeight = document.documentElement.scrollHeight - window.innerHeight
+      if (scrollableHeight > 0) {
+        const scrolled = window.scrollY
+        const scrollPercent = (scrolled / scrollableHeight) * 100
+        setScrollPercentage(scrollPercent)
+      } else {
+        setScrollPercentage(100)
+      }
+    }
+
+    window.addEventListener('scroll', handleScroll, { passive: true })
+    handleScroll() // 초기 로드 시 호출
+
+    return () => window.removeEventListener('scroll', handleScroll)
+  }, [article, isLoading])
+
   if (isLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-50">
@@ -56,6 +75,12 @@ export default function ArticlePage() {
 
   return (
     <div className="min-h-screen bg-gray-50">
+      <div className="fixed bottom-0 left-0 w-full h-1 z-50">
+        <div
+          className="h-1 bg-jj transition-all duration-75"
+          style={{ width: `${scrollPercentage}%` }}
+        />
+      </div>
       <div className="max-w-5xl mx-auto sm:px-6 sm:py-6 lg:px-8 lg:py-8">
         <article className="bg-white rounded-lg shadow-lg overflow-hidden">
           {/* 헤더 이미지 */}
@@ -73,9 +98,9 @@ export default function ArticlePage() {
           )}
 
           {/* 콘텐츠 영역 */}
-          <div className="p-3 sm:p-6 md:p-9 lg:p-12">
+          <div className="pt-8 pb-8 pl-3 pr-3 sm:p-8 md:p-10 lg:p-12">
             {/* 제목 */}
-            <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-900 mb-4 leading-tight">
+            <h1 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4 leading-tight">
               {article.title}
             </h1>
 
@@ -97,7 +122,7 @@ export default function ArticlePage() {
 
             {/* 요약 */}
             {article.intro && (
-              <div className="mb-8 p-4 bg-gray-50 rounded-lg border-l-4 border-t-4 border-red-600">
+              <div className="mb-8 p-3 bg-gray-50 rounded-lg border-l-4 border-t-4 border-jj">
                 <p className="text-gray-700 font-medium">
                   {article.intro}
                 </p>
@@ -108,7 +133,7 @@ export default function ArticlePage() {
             <div
               className="prose prose-lg max-w-none prose-gray
                 prose-h1:text-gray-900 prose-h1:font-bold
-                prose-h2:text-gray-900 prose-h2:font-bold
+                prose-h2:text-gray-900 prose-h2:font-bold prose-h2:p-3 prose-h2:rounded-lg prose-h2:border-l-4 prose-h2:border-t-4 prose-h2:border-jj
                 prose-p:text-gray-700 prose-p:leading-relaxed
                 prose-a:text-blue-600 prose-a:no-underline hover:prose-a:underline
                 prose-strong:text-gray-900

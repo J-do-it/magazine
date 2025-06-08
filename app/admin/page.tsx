@@ -26,7 +26,7 @@ export default async function AdminPage() {
   return (
     <div className="w-full max-w-4xl mx-auto py-10 px-4">
       <div className="flex justify-between items-center mb-8">
-        <h1 className="text-4xl font-bold">관리자 페이지</h1>
+        <h1 className="text-4xl font-bold text-black">관리자 페이지</h1>
         {/* '새 글 작성' 기능이 필요하다면 아래 버튼을 활용할 수 있습니다. */}
         {/* 
         <Link href="/admin/editor/new">

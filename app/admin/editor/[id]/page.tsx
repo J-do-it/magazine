@@ -58,28 +58,28 @@ function TiptapEditor({
         <button
           type="button"
           onClick={() => editor.chain().focus().toggleBold().run()}
-          className={`px-2 py-1 rounded ${editor.isActive('bold') ? 'bg-red-600 text-white' : 'bg-gray-200 text-black'}`}
+          className={`px-2 py-1 rounded ${editor.isActive('bold') ? 'bg-jj text-white' : 'bg-gray-200 text-black'}`}
         >
           Bold
         </button>
         <button
           type="button"
           onClick={() => editor.chain().focus().toggleItalic().run()}
-          className={`px-2 py-1 rounded ${editor.isActive('italic') ? 'bg-red-600 text-white' : 'bg-gray-200 text-black'}`}
+          className={`px-2 py-1 rounded ${editor.isActive('italic') ? 'bg-jj text-white' : 'bg-gray-200 text-black'}`}
         >
           Italic
         </button>
         <button
           type="button"
           onClick={() => editor.chain().focus().toggleHeading({ level: 1 }).run()}
-          className={`px-2 py-1 rounded ${editor.isActive('heading', { level: 1 }) ? 'bg-red-600 text-white' : 'bg-gray-200 text-black'}`}
+          className={`px-2 py-1 rounded ${editor.isActive('heading', { level: 1 }) ? 'bg-jj text-white' : 'bg-gray-200 text-black'}`}
         >
           H1
         </button>
         <button
           type="button"
           onClick={() => editor.chain().focus().toggleHeading({ level: 2 }).run()}
-          className={`px-2 py-1 rounded ${editor.isActive('heading', { level: 2 }) ? 'bg-red-600 text-white' : 'bg-gray-200 text-black'}`}
+          className={`px-2 py-1 rounded ${editor.isActive('heading', { level: 2 }) ? 'bg-jj text-white' : 'bg-gray-200 text-black'}`}
         >
           H2
         </button>
@@ -98,7 +98,7 @@ function TiptapEditor({
               editor.chain().focus().setLink({ href: url }).run()
             }
           }}
-          className={`px-2 py-1 rounded ${editor.isActive('link') ? 'bg-red-600 text-white' : 'bg-gray-200 text-black'}`}
+            className={`px-2 py-1 rounded ${editor.isActive('link') ? 'bg-jj text-white' : 'bg-gray-200 text-black'}`}
         >
           링크
         </button>
@@ -216,8 +216,8 @@ const EditorPage = () => {
             <button
               onClick={handleSave}
               disabled={isSaving}
-              className="px-6 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 disabled:opacity-50 disabled:cursor-not-allowed"
-            >
+              className="px-6 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-jj hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 disabled:opacity-50 disabled:cursor-not-allowed"
+            > 
               {isSaving ? '저장 중...' : '저장'}
             </button>
           </div>
