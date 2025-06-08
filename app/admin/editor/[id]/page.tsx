@@ -32,10 +32,8 @@ function TiptapEditor({
         linkOnPaste: true,
       }),
       Youtube.configure({
-        width: 640,
-        height: 360,
         HTMLAttributes: {
-          class: 'mx-auto my-4',
+          class: 'mx-auto my-4 max-w-[640px] aspect-video',
         },
       }),
     ],

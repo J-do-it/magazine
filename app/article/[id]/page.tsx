@@ -1,30 +1,58 @@
-import { createClient } from '@/utils/supabase/server'
-import { notFound } from 'next/navigation'
+"use client"
+
+import { useEffect, useState } from "react"
+import { createClient } from '@supabase/supabase-js'
+import { notFound, useParams } from 'next/navigation'
 import Image from 'next/image'
 
-interface Article {
-  id: string
-  title: string
-  content: string
-  image?: string
-  created_at: string
-  author?: string
-  excerpt?: string
-}
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || 'YOUR_SUPABASE_URL'
+const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || 'YOUR_SUPABASE_ANON_KEY'
+const supabase = createClient(supabaseUrl, supabaseKey)
 
-export default async function ArticlePage({ params }) { 
-  const { id } = await params
-  const supabase = await createClient()
-  
-  const { data: article, error } = await supabase
-    .from('articles')
-    .select('*')
-    .eq('id', id)
-    .single()
+export default function ArticlePage() {
+  const params = useParams()
+  const id = params?.id
 
-  if (error || !article) {
-    notFound()
+  const [article, setArticle] = useState<any>(null)
+  const [isLoading, setIsLoading] = useState(true)
+
+  useEffect(() => {
+    if (!id) return
+    const fetchArticle = async () => {
+      setIsLoading(true)
+      const { data, error } = await supabase
+        .from('articles')
+        .select('*')
+        .eq('id', id)
+        .single()
+
+      if (error || !data) {
+        console.error("Error fetching article:", error)
+        setArticle(null)
+      } else {
+        setArticle(data)
+      }
+      setIsLoading(false)
+    }
+    fetchArticle()
+  }, [id])
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gray-50">
+        <span className="text-gray-400">로딩 중...</span>
+      </div>
+    )
   }
+  
+  if (!article) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gray-50">
+        <span className="text-gray-400">게시글을 찾을 수 없습니다.</span>
+      </div>
+    )
+  }
+ 
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -43,14 +71,14 @@ export default async function ArticlePage({ params }) {
               <div className="absolute inset-0 bg-black bg-opacity-40"></div>
             </div>
           )}
-          
+
           {/* 콘텐츠 영역 */}
           <div className="p-6 md:p-8 lg:p-12">
             {/* 제목 */}
             <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-900 mb-4 leading-tight">
               {article.title}
             </h1>
-            
+
             {/* 메타 정보 */}
             <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-8 pb-6 border-b border-gray-200">
               <div className="text-sm text-gray-500 mb-2 sm:mb-0">
@@ -66,7 +94,7 @@ export default async function ArticlePage({ params }) {
                 })}
               </div>
             </div>
-            
+
             {/* 요약 */}
             {article.excerpt && (
               <div className="mb-8 p-4 bg-gray-50 rounded-lg border-l-4 border-blue-500">
@@ -75,9 +103,9 @@ export default async function ArticlePage({ params }) {
                 </p>
               </div>
             )}
-            
+
             {/* 본문 내용 */}
-            <div 
+            <div
               className="prose prose-lg max-w-none prose-gray
                 prose-headings:text-gray-900 prose-headings:font-bold
                 prose-p:text-gray-700 prose-p:leading-relaxed
