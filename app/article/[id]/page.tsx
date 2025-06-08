@@ -12,7 +12,7 @@ interface Article {
   excerpt?: string
 }
 
-export default async function ArticlePage({ params }: { params: { id: string } }) { 
+export default async function ArticlePage({ params }) { 
   const { id } = await params
   const supabase = await createClient()
   
