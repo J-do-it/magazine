@@ -1,7 +1,8 @@
 import React from 'react';
 import Logo from './Logo';
 import HamburgerIcon from './HamburgerIcon';
-import SearchIcon from './SearchIcon';
+import MyIcon from './My';
+import Link from 'next/link';
 
 const Header = () => {
   return (
@@ -11,10 +12,12 @@ const Header = () => {
           <HamburgerIcon className="h-6 w-6" />
         </button>
         <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
-            <Logo className="h-10" />
+            <Link href="/">
+              <Logo className="h-10" />
+            </Link>
         </div>
         <button className="p-2">
-          <SearchIcon className="h-6 w-6" />
+          <MyIcon className="h-6 w-6" />
         </button>
       </div>
     </header>

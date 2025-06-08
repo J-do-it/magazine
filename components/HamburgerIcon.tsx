@@ -14,9 +14,11 @@ const HamburgerIcon = ({ className }: { className?: string }) => {
       strokeLinecap="round"
       strokeLinejoin="round"
     >
-      <line x1="3" y1="12" x2="21" y2="12"></line>
-      <line x1="3" y1="6" x2="21" y2="6"></line>
-      <line x1="3" y1="18" x2="21" y2="18"></line>
+      <path d="M3 12h9" />
+      <path d="M3 6h9" />
+      <path d="M3 18h9" />
+      <circle cx="17" cy="10" r="3" />
+      <path d="m19 12 2.5 2.5" />
     </svg>
   );
 };

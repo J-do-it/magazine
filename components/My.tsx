@@ -1,6 +1,6 @@
 import React from 'react';
 
-const SearchIcon = ({ className }: { className?: string }) => {
+const MyIcon = ({ className }: { className?: string }) => {
   return (
     <svg
       className={className}
@@ -14,10 +14,10 @@ const SearchIcon = ({ className }: { className?: string }) => {
       strokeLinejoin="round"
       xmlns="http://www.w3.org/2000/svg"
     >
-      <circle cx="11" cy="11" r="8"></circle>
-      <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+      <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+      <circle cx="12" cy="7" r="4"></circle>
     </svg>
   );
 };
 
-export default SearchIcon; 
+export default MyIcon; 

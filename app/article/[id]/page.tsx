@@ -56,7 +56,7 @@ export default function ArticlePage() {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <div className="max-w-5xl mx-auto sm:px-6 sm:py-6 lg:px-8 lg:py-8">
         <article className="bg-white rounded-lg shadow-lg overflow-hidden">
           {/* 헤더 이미지 */}
           {article.image && (
@@ -73,7 +73,7 @@ export default function ArticlePage() {
           )}
 
           {/* 콘텐츠 영역 */}
-          <div className="p-6 md:p-8 lg:p-12">
+          <div className="p-3 sm:p-6 md:p-9 lg:p-12">
             {/* 제목 */}
             <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-900 mb-4 leading-tight">
               {article.title}
@@ -96,10 +96,10 @@ export default function ArticlePage() {
             </div>
 
             {/* 요약 */}
-            {article.excerpt && (
-              <div className="mb-8 p-4 bg-gray-50 rounded-lg border-l-4 border-blue-500">
-                <p className="text-gray-700 font-medium italic">
-                  {article.excerpt}
+            {article.intro && (
+              <div className="mb-8 p-4 bg-gray-50 rounded-lg border-l-4 border-t-4 border-red-600">
+                <p className="text-gray-700 font-medium">
+                  {article.intro}
                 </p>
               </div>
             )}
@@ -107,7 +107,8 @@ export default function ArticlePage() {
             {/* 본문 내용 */}
             <div
               className="prose prose-lg max-w-none prose-gray
-                prose-headings:text-gray-900 prose-headings:font-bold
+                prose-h1:text-gray-900 prose-h1:font-bold
+                prose-h2:text-gray-900 prose-h2:font-bold
                 prose-p:text-gray-700 prose-p:leading-relaxed
                 prose-a:text-blue-600 prose-a:no-underline hover:prose-a:underline
                 prose-strong:text-gray-900
