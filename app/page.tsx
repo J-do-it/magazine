@@ -1,9 +1,4 @@
 import Header from '../components/Header';
-import { createClient } from '@supabase/supabase-js'
-
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || 'YOUR_SUPABASE_URL'
-const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || 'YOUR_SUPABASE_ANON_KEY'
-const supabase = createClient(supabaseUrl, supabaseKey)
 
 // Supabase 'articles' 테이블을 대체할 임시 데이터
 const mainArticle = {
