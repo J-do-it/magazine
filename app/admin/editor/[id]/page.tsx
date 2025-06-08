@@ -11,6 +11,7 @@ import Youtube from '@tiptap/extension-youtube'
 type Article = {
   id: string;
   title: string | null;
+  intro: string | null;
   content: string | null;
   [key: string]: unknown;
 }
@@ -44,7 +45,7 @@ function TiptapEditor({
     editorProps: {
       attributes: {
         class:
-          'prose min-h-[300px] max-h-[1000px] bg-white text-black border border-gray-300 rounded-md px-4 py-3 focus:outline-none',
+          'prose min-h-[100px] bg-white text-black border border-gray-300 rounded-md px-4 py-3 focus:outline-none',
       },
     },
   })
@@ -179,10 +180,10 @@ const EditorPage = () => {
   const handleSave = async () => {
     if (!article) return
     setIsSaving(true)
-    const { title, content } = article
+    const { title, intro, content } = article
     const { error } = await supabase
       .from('articles')
-      .update({ title, content })
+      .update({ title, intro, content })
       .eq('id', article.id)
 
     if (error) {
@@ -236,6 +237,15 @@ const EditorPage = () => {
               placeholder="아티클 제목"
             />
           </div>
+          <div className="mb-6">
+            <label htmlFor="title" className="block text-lg font-medium text-white mb-2">
+              인트로
+            </label>
+            <TiptapEditor
+              value={article.intro || ''}
+              onChange={handleContentChange}
+            />
+          </div>
           <div className="flex-grow flex flex-col">
             <label htmlFor="content" className="block text-lg font-medium text-white mb-2">
               내용
@@ -254,6 +264,7 @@ const EditorPage = () => {
           <article className="prose lg:prose-xl max-w-none">
             <h1 dangerouslySetInnerHTML={{ __html: article.title || '' }}></h1>
             <div style={{ whiteSpace: 'pre-wrap' }}>
+              <div dangerouslySetInnerHTML={{ __html: article.intro || '' }}></div>
               <div dangerouslySetInnerHTML={{ __html: article.content || '' }}></div>
             </div>
           </article>
