@@ -72,7 +72,7 @@ export default function Home() {
           {/* Main Content (Center on Desktop) - First on Mobile */}
           <div className="w-full lg:w-1/2 lg:order-2">
             <div className="border-b pb-4">
-              <span className="text-red-600 font-bold">TODAY'S NEW</span>
+              <span className="text-red-600 font-bold">TODAY</span>
               <h1 className="text-3xl lg:text-4xl text-black font-extrabold my-2 leading-tight">
                 {mainArticle.title}
               </h1>
