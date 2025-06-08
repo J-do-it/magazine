@@ -1,4 +1,5 @@
 import Header from '../components/Header';
+import Image from 'next/image'
 
 // Supabase 'articles' 테이블을 대체할 임시 데이터
 const mainArticle = {
