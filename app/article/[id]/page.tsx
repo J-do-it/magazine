@@ -75,7 +75,7 @@ export default function ArticlePage() {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <div className="fixed bottom-0 left-0 w-full h-1 z-50">
+      <div className="fixed top-0 left-0 w-full h-1 z-50">
         <div
           className="h-1 bg-jj transition-all duration-75"
           style={{ width: `${scrollPercentage}%` }}
