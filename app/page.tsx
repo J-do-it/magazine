@@ -1,13 +1,8 @@
 import Header from '../components/Header';
 import Image from 'next/image'
+import { createClient } from '@/utils/supabase/server';
 
 // Supabase 'articles' 테이블을 대체할 임시 데이터
-const mainArticle = {
-  title: '이준석 제명 청원 37만 넘었는데 "민주당 당혹 딜레마 빠졌다" 왜',
-  excerpt: "'李재판 정치' 청원도 많아…이준석 제명 맨與입법도 제동",
-  image: 'https://via.placeholder.com/600x400.png/000000/FFFFFF?text=Main+Article',
-};
-
 const leftColumnSections = [
   {
     sectionTitle: '트렌드',
@@ -61,8 +56,26 @@ const rightColumnArticles = [
   },
 ];
 
+export default async function Home() {
+  const supabase = await createClient();
+  const { data: latestArticle, error } = await supabase
+    .from('articles')
+    .select('title, intro, image')
+    .order('created_at', { ascending: false })
+    .limit(1)
+    .single();
 
-export default function Home() {
+  if (error) {
+    console.error('Error fetching latest article:', error);
+    // You might want to render an error state here
+  }
+  
+  const mainArticle = latestArticle ? {
+    title: latestArticle.title,
+    intro: latestArticle.intro,
+    image: latestArticle.image || 'https://via.placeholder.com/600x400.png/000000/FFFFFF?text=Main+Article', // fallback image
+  } : null;
+
   return (
     <>
       <Header />
@@ -70,18 +83,20 @@ export default function Home() {
         <div className="flex flex-col lg:flex-row lg:gap-x-8">
           
           {/* Main Content (Center on Desktop) - First on Mobile */}
-          <div className="w-full lg:w-1/2 lg:order-2">
-            <div className="border-b pb-4">
-              <span className="text-jj font-bold">HOT TOPIC</span>
-              <h1 className="text-3xl lg:text-4xl text-black font-extrabold my-2 leading-tight">
-                {mainArticle.title}
-              </h1>
-              <p className="text-gray-600">{mainArticle.excerpt}</p>
+          {mainArticle && (
+            <div className="w-full lg:w-1/2 lg:order-2">
+              <div className="border-b pb-4">
+                <span className="text-jj font-bold">HOT TOPIC</span>
+                <h1 className="text-3xl lg:text-4xl text-black font-extrabold my-2 leading-tight">
+                  {mainArticle.title}
+                </h1>
+                <p className="text-gray-600">{mainArticle.intro}</p>
+              </div>
+              <div className="mt-4">
+                <img src={mainArticle.image} alt={mainArticle.title || 'Main article image'} className="text-black w-full h-auto object-cover" />
+              </div>
             </div>
-            <div className="mt-4">
-              <img src={mainArticle.image} alt={mainArticle.title} className="text-black w-full h-auto object-cover" />
-            </div>
-          </div>
+          )}
 
           {/* Left Sidebar - Second on Mobile */}
           <div className="w-full lg:w-1/4 lg:order-1 mt-8 lg:mt-0">

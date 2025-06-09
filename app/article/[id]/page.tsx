@@ -121,7 +121,7 @@ export default function ArticlePage() {
               </div>
               <div className="text-sm text-gray-900">
                 <span className="font-medium">수정일: </span>
-                {new Date(article.created_at).toLocaleDateString('ko-KR', {
+                {new Date(article.updated_at).toLocaleDateString('ko-KR', {
                   year: 'numeric',
                   month: 'long',
                   day: 'numeric'
