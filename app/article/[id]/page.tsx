@@ -82,7 +82,7 @@ export default function ArticlePage() {
         />
       </div>
       <div className="max-w-5xl mx-auto sm:px-6 sm:py-6 lg:px-8 lg:py-8">
-        <article className="bg-white rounded-lg shadow-lg overflow-hidden">
+        <article className="bg-white rounded-none sm:rounded-lg shadow-lg overflow-hidden">
           {/* 헤더 이미지 */}
           {article.image && (
             <div className="relative w-full h-48 sm:h-60 md:h-96">
@@ -98,20 +98,29 @@ export default function ArticlePage() {
           )}
 
           {/* 콘텐츠 영역 */}
-          <div className="pt-8 pb-8 pl-3 pr-3 sm:p-8 md:p-10 lg:p-12">
+          <div className="pt-8 pb-8 pl-4 pr-4 sm:p-8 md:p-10 lg:p-12">
             {/* 제목 */}
-            <h1 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4 leading-tight">
+            <h1 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4 leading-tight tracking-tight">
               {article.title}
             </h1>
 
             {/* 메타 정보 */}
-            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-8 pb-6 border-b border-gray-200">
-              <div className="text-sm text-gray-500 mb-2 sm:mb-0">
+            <div className="flex flex-col mb-8 pb-6 border-b border-gray-300">
+              <div className="text-sm text-gray-900 mb-2">
                 {article.author && (
-                  <span className="font-medium">Written by {article.author}</span>
+                  <span className="font-medium">에디터 {article.author}</span>
                 )}
               </div>
-              <div className="text-sm text-gray-500">
+              <div className="text-sm text-gray-900">
+                <span className="font-medium">작성일: </span>
+                {new Date(article.created_at).toLocaleDateString('ko-KR', {
+                  year: 'numeric',
+                  month: 'long',
+                  day: 'numeric'
+                })}
+              </div>
+              <div className="text-sm text-gray-900">
+                <span className="font-medium">수정일: </span>
                 {new Date(article.created_at).toLocaleDateString('ko-KR', {
                   year: 'numeric',
                   month: 'long',
@@ -122,7 +131,7 @@ export default function ArticlePage() {
 
             {/* 요약 */}
             {article.intro && (
-              <div className="mb-8 p-3 bg-gray-50 rounded-lg border-l-4 border-t-4 border-jj">
+              <div className="mb-8 p-3 border-l-4 border-jj">
                 <p className="text-gray-700 font-medium">
                   {article.intro}
                 </p>
@@ -133,7 +142,7 @@ export default function ArticlePage() {
             <div
               className="prose prose-lg max-w-none prose-gray
                 prose-h1:text-gray-900 prose-h1:font-bold
-                prose-h2:text-gray-900 prose-h2:font-bold prose-h2:p-3 prose-h2:rounded-lg prose-h2:border-l-4 prose-h2:border-t-4 prose-h2:border-jj
+                prose-h2:text-gray-900 prose-h2:font-bold prose-h2:p-3 prose-h2:rounded-lg prose-h2:border-l-4 prose-h2:border-t-4 prose-h2:border-jj prose-h2:tracking-tighter
                 prose-p:text-gray-700 prose-p:leading-relaxed
                 prose-a:text-blue-600 prose-a:no-underline hover:prose-a:underline
                 prose-strong:text-gray-900
