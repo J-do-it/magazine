@@ -1,37 +1,19 @@
 import Header from '../components/Header';
 import Image from 'next/image'
+import Link from 'next/link';
 import { createClient } from '@/utils/supabase/server';
 
-// Supabase 'articles' 테이블을 대체할 임시 데이터
-const leftColumnSections = [
-  {
-    sectionTitle: '트렌드',
-    articles: [
-      {
-        title: '秋, 취임 10일만에 G7 참석 왜',
-        image: 'https://via.placeholder.com/300x200.png/000000/FFFFFF?text=Side+Article',
-      },
-      {
-        title: "G7 '고난도 데뷔전' 기다린다…尹, 트럼프와 '첫인상 외교' 관건",
-      },
-      {
-        title: "秋대통령, 과거 정부처럼 '빚 탕감' 할까…재원마련 숙제",
-      },
-    ],
-  },
-  {
-    sectionTitle: "인터뷰",
-    articles: [
-      {
-        title: "'친윤 검찰 활호할 인사' 與 반발 갔지만…오광수 민정수석 임명",
-        image: 'https://via.placeholder.com/300x200.png/000000/FFFFFF?text=Side+Article',
-      },
-      {
-        title: '대통령실 정무수석 유상호, 민정수석 오광수, 홍보수석 이규연',
-      },
-    ],
-  },
-];
+// 좌측 컬럼 섹션 타입 정의
+type ArticleData = {
+  id: string;
+  title: string;
+  image?: string;
+};
+
+type LeftColumnSection = {
+  sectionTitle: string;
+  articles: ArticleData[];
+};
 
 const rightColumnArticles = [
   {
@@ -58,6 +40,8 @@ const rightColumnArticles = [
 
 export default async function Home() {
   const supabase = await createClient();
+  
+  // 최신 아티클 가져오기
   const { data: latestArticle, error } = await supabase
     .from('articles')
     .select('title, intro, image')
@@ -67,14 +51,35 @@ export default async function Home() {
 
   if (error) {
     console.error('Error fetching latest article:', error);
-    // You might want to render an error state here
   }
   
   const mainArticle = latestArticle ? {
     title: latestArticle.title,
     intro: latestArticle.intro,
-    image: latestArticle.image || 'https://via.placeholder.com/600x400.png/000000/FFFFFF?text=Main+Article', // fallback image
+    image: latestArticle.image || 'https://via.placeholder.com/600x400.png/000000/FFFFFF?text=Main+Article',
   } : null;
+
+  // 좌측 컬럼용 섹션별 아티클 가져오기
+  const sectionTypes = ['인사이트', '글로벌', '인터뷰'];
+  const leftColumnSections: LeftColumnSection[] = [];
+
+  for (const type of sectionTypes) {
+    const { data: typeArticles, error: typeError } = await supabase
+      .from('articles')
+      .select('id, title, image')
+      .eq('type', type)
+      .order('created_at', { ascending: false })
+      .limit(3);
+
+    if (typeError) {
+      console.error(`Error fetching ${type} articles:`, typeError);
+    }
+
+    leftColumnSections.push({
+      sectionTitle: type,
+      articles: typeArticles || [],
+    });
+  }
 
   return (
     <>
@@ -108,10 +113,16 @@ export default async function Home() {
                 <ul className="mt-2 space-y-4 text-black">
                   {section.articles.map((article, articleIndex) => (
                     <li key={articleIndex}>
-                      {article.image && (
-                         <img src={article.image} alt={article.title} className="text-black w-full h-auto object-cover mb-2" />
-                      )}
-                      <p className="font-semibold hover:underline cursor-pointer">{article.title}</p>
+                      <Link href={`/article/${article.id}`} className="block group">
+                        {article.image && (
+                           <img 
+                             src={article.image} 
+                             alt={article.title} 
+                             className="text-black w-full h-auto object-cover mb-2 group-hover:opacity-80 transition-opacity" 
+                           />
+                        )}
+                        <p className="font-semibold group-hover:underline cursor-pointer">{article.title}</p>
+                      </Link>
                     </li>
                   ))}
                 </ul>
