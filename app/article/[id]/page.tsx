@@ -149,7 +149,7 @@ export default function ArticlePage() {
                 prose-ul:text-gray-700 prose-ol:text-gray-700
                 prose-li:text-gray-700
                 prose-blockquote:text-gray-600 prose-blockquote:border-l-blue-500               
-                prose-img:rounded-lg prose-img:shadow-md"
+                prose-img:rounded-lg prose-img:shadow-md prose-img:mx-auto"
               dangerouslySetInnerHTML={{
                 __html: article.content.replace(/\n/g, '<br />')
               }}
