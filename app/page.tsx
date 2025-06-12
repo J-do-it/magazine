@@ -60,7 +60,7 @@ export default async function Home() {
   } : null;
 
   // 좌측 컬럼용 섹션별 아티클 가져오기
-  const sectionTypes = ['인사이트', '글로벌', '인터뷰'];
+  const sectionTypes = ['insight', 'global', 'interview'];
   const leftColumnSections: LeftColumnSection[] = [];
 
   for (const type of sectionTypes) {
@@ -95,9 +95,9 @@ export default async function Home() {
                 <h1 className="text-3xl lg:text-4xl text-black font-extrabold my-2 leading-tight">
                   {mainArticle.title}
                 </h1>
-                <p className="text-gray-600">{mainArticle.intro}</p>
+                <p className="text-gray-600" dangerouslySetInnerHTML={{ __html: mainArticle.intro }} />
               </div>
-              <div className="mt-4">
+              <div>
                 <img src={mainArticle.image} alt={mainArticle.title || 'Main article image'} className="text-black w-full h-auto object-cover" />
               </div>
             </div>
@@ -107,9 +107,17 @@ export default async function Home() {
           <div className="w-full lg:w-1/4 lg:order-1 mt-8 lg:mt-0">
             {leftColumnSections.map((section, index) => (
               <div key={index} className="mb-8">
-                <h2 className="text-xl text-black font-bold pb-2 border-b-2 border-black">
-                  {section.sectionTitle}
-                </h2>
+                <div className="flex justify-between items-center pb-2 border-b-2 border-black">
+                  <h2 className="text-xl text-black font-bold">
+                    {section.sectionTitle}
+                  </h2>
+                  <Link 
+                    href={`/${section.sectionTitle}`}
+                    className="text-sm text-black hover:text-gray-500 font-medium transition-colors"
+                  >
+                    더보기
+                  </Link>
+                </div>
                 <ul className="mt-2 space-y-4 text-black">
                   {section.articles.map((article, articleIndex) => (
                     <li key={articleIndex}>
