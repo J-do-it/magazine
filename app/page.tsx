@@ -44,7 +44,7 @@ export default async function Home() {
   // 최신 아티클 가져오기
   const { data: latestArticle, error } = await supabase
     .from('articles')
-    .select('title, intro, image')
+    .select('id, title, intro, image')
     .order('created_at', { ascending: false })
     .limit(1)
     .single();
@@ -54,6 +54,7 @@ export default async function Home() {
   }
   
   const mainArticle = latestArticle ? {
+    id: latestArticle.id,
     title: latestArticle.title,
     intro: latestArticle.intro,
     image: latestArticle.image || 'https://via.placeholder.com/600x400.png/000000/FFFFFF?text=Main+Article',
@@ -90,16 +91,18 @@ export default async function Home() {
           {/* Main Content (Center on Desktop) - First on Mobile */}
           {mainArticle && (
             <div className="w-full lg:w-1/2 lg:order-2">
-              <div className="border-b pb-4">
-                <span className="text-jj font-bold">HOT TOPIC</span>
-                <h1 className="text-3xl lg:text-4xl text-black font-extrabold my-2 leading-tight">
-                  {mainArticle.title}
-                </h1>
-                <p className="text-gray-600" dangerouslySetInnerHTML={{ __html: mainArticle.intro }} />
-              </div>
-              <div>
-                <img src={mainArticle.image} alt={mainArticle.title || 'Main article image'} className="text-black w-full h-auto object-cover" />
-              </div>
+              <Link href={`/article/${mainArticle.id}`} className="block group cursor-pointer">
+                <div className="pb-4">
+                  <span className="text-jj font-bold">HOT TOPIC</span>
+                  <h1 className="text-3xl lg:text-4xl text-black font-extrabold my-2 leading-tight group-hover:text-jj transition-colors">
+                    {mainArticle.title}
+                  </h1>
+                  <p className="text-gray-600" dangerouslySetInnerHTML={{ __html: mainArticle.intro }} />
+                </div>
+                <div>
+                  <img src={mainArticle.image} alt={mainArticle.title || 'Main article image'} className="text-black w-full h-auto object-cover group-hover:opacity-90 transition-opacity" />
+                </div>
+              </Link>
             </div>
           )}
 
