@@ -146,11 +146,13 @@ export default function ArticlePage() {
                 prose-p:text-gray-700 prose-p:leading-relaxed
                 prose-a:text-blue-600 prose-a:no-underline hover:prose-a:underline
                 prose-strong:text-gray-900
-                prose-ul:text-gray-700 prose-ol:text-gray-700
+                prose-ul:text-gray-700
+                prose-ol:text-gray-700
                 prose-li:text-gray-700
                 prose-blockquote:text-gray-600 prose-blockquote:border-l-blue-500               
                 prose-img:rounded-lg prose-img:shadow-md prose-img:mx-auto
-                prose-figcaption:text-center prose-figcaption:text-gray-500 prose-figcaption:text-sm"
+                prose-figcaption:text-center prose-figcaption:text-gray-500 prose-figcaption:text-sm
+                prose-hr:border-gray-300 prose-hr:my-4"
               dangerouslySetInnerHTML={{
                 __html: article.content.replace(/\n/g, '<br />')
               }}
