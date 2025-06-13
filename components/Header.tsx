@@ -1,13 +1,22 @@
 'use client'
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Logo from './Logo';
 import HamburgerIcon from './HamburgerIcon';
 import MyIcon from './My';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const router = useRouter();
+
+  useEffect(() => {
+    // 로그인 상태 확인 (localStorage에서 체크)
+    const loginStatus = localStorage.getItem('isLoggedIn');
+    setIsLoggedIn(loginStatus === 'true');
+  }, []);
 
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
@@ -15,6 +24,14 @@ const Header = () => {
 
   const closeMenu = () => {
     setIsMenuOpen(false);
+  };
+
+  const handleMyIconClick = () => {
+    if (isLoggedIn) {
+      router.push('/my');
+    } else {
+      router.push('/signin');
+    }
   };
 
   return (
@@ -29,7 +46,7 @@ const Header = () => {
                 <Logo className="h-10" />
               </Link>
           </div>
-          <button className="p-2">
+          <button className="p-2" onClick={handleMyIconClick}>
             <MyIcon className="h-6 w-6" />
           </button>
         </div>
