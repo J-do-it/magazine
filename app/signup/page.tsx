@@ -239,7 +239,7 @@ export default function SignUpPage() {
                   value={formData.phone}
                   onChange={handleChange}
                   className="text-black appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md placeholder-gray-400 focus:outline-none focus:ring-black focus:border-black sm:text-sm"
-                  placeholder="010-0000-0000"
+                  placeholder="핸드폰 번호를 입력하세요"
                 />
                 {errors.phone && <p className="mt-1 text-sm text-red-600">{errors.phone}</p>}
               </div>

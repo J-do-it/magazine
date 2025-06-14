@@ -3,6 +3,7 @@
 import React, { useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
+import { createClient } from '@/utils/supabase/client';
 
 export default function SignInPage() {
   const [formData, setFormData] = useState({
@@ -10,34 +11,73 @@ export default function SignInPage() {
     password: ''
   });
   const [error, setError] = useState('');
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const router = useRouter();
+  const supabase = createClient();
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData({
       ...formData,
       [e.target.name]: e.target.value
     });
+    // 입력 시 에러 메시지 초기화
+    if (error) {
+      setError('');
+    }
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  // 버튼 활성화 조건 확인
+  const isFormValid = () => {
+    return formData.email.trim() && formData.password.trim();
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
 
-    // 간단한 로그인 검증 (실제 프로젝트에서는 서버 API 호출)
-    if (formData.email === '' || formData.password === '') {
+    if (!isFormValid()) {
       setError('아이디와 비밀번호를 모두 입력해주세요.');
       return;
     }
 
-    // 로그인 성공 시뮬레이션
-    localStorage.setItem('isLoggedIn', 'true');
-    localStorage.setItem('userInfo', JSON.stringify({
-      name: '사용자',
-      email: formData.email,
-      phone: '010-0000-0000'
-    }));
-    
-    router.push('/my');
+    setIsSubmitting(true);
+
+    try {
+      // Supabase Auth를 사용한 로그인
+      const { data, error: authError } = await supabase.auth.signInWithPassword({
+        email: formData.email,
+        password: formData.password,
+      });
+
+      if (authError) {
+        console.error('로그인 오류:', authError);
+        
+        // 에러 메시지에 따라 구체적인 안내문 표시
+        if (authError.message.includes('Invalid login credentials') || 
+            authError.message.includes('Email not confirmed') ||
+            authError.message.includes('User not found')) {
+          // 이메일이 존재하지 않거나 확인되지 않은 경우
+          setError('이메일을 확인해주세요');
+        } else if (authError.message.includes('Invalid password') ||
+                   authError.message.includes('Wrong password')) {
+          // 비밀번호가 틀린 경우
+          setError('비밀번호를 확인해주세요');
+        } else {
+          // 기타 오류의 경우 일반적인 메시지 표시
+          setError('로그인에 실패했습니다. 다시 시도해주세요.');
+        }
+        return;
+      }
+
+      // 로그인 성공 시 메인 페이지로 이동
+      router.push('/');
+      
+    } catch (error) {
+      console.error('로그인 중 오류 발생:', error);
+      setError('로그인 중 오류가 발생했습니다. 다시 시도해주세요.');
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -66,8 +106,8 @@ export default function SignInPage() {
                   required
                   value={formData.email}
                   onChange={handleChange}
-                  className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md placeholder-gray-400 focus:outline-none focus:ring-black focus:border-black sm:text-sm"
-                  placeholder="아이디를 입력하세요"
+                  className="text-black appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md placeholder-gray-400 focus:outline-none focus:ring-black focus:border-black sm:text-sm"
+                  placeholder="이메일을 입력하세요"
                 />
               </div>
             </div>
@@ -84,7 +124,7 @@ export default function SignInPage() {
                   required
                   value={formData.password}
                   onChange={handleChange}
-                  className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md placeholder-gray-400 focus:outline-none focus:ring-black focus:border-black sm:text-sm"
+                  className="text-black appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md placeholder-gray-400 focus:outline-none focus:ring-black focus:border-black sm:text-sm"
                   placeholder="비밀번호를 입력하세요"
                 />
               </div>
@@ -99,9 +139,14 @@ export default function SignInPage() {
             <div>
               <button
                 type="submit"
-                className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-black hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-black transition-colors"
+                disabled={!isFormValid() || isSubmitting}
+                className={`w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white transition-colors ${
+                  isFormValid() && !isSubmitting
+                    ? 'bg-black hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-black'
+                    : 'bg-gray-400 cursor-not-allowed'
+                }`}
               >
-                로그인
+                {isSubmitting ? '로그인 중...' : '로그인'}
               </button>
             </div>
           </form>
