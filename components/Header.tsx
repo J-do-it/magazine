@@ -59,6 +59,7 @@ const Header = () => {
   }, [supabase.auth]);
 
   const toggleMenu = () => {
+    console.log('Toggle menu clicked, current state:', isMenuOpen);
     setIsMenuOpen(!isMenuOpen);
   };
 
@@ -90,9 +91,13 @@ const Header = () => {
 
   return (
     <>
-      <header className="fixed top-0 left-0 right-0 bg-black text-white z-50">
+      <header className="fixed top-0 left-0 right-0 bg-black text-white z-[9997]">
         <div className="container mx-auto px-4 h-16 flex items-center justify-between">
-          <button className="p-2" onClick={toggleMenu}>
+          <button 
+            className="p-2" 
+            onClick={toggleMenu}
+            style={{ zIndex: 10000 }}
+          >
             <HamburgerIcon className="h-6 w-6" />
           </button>
           <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
@@ -134,57 +139,82 @@ const Header = () => {
       </header>
 
       {/* 슬라이드 메뉴 */}
-      <div className={`fixed top-0 left-0 h-full w-80 bg-black text-white z-40 transform transition-transform duration-300 ease-in-out ${
-        isMenuOpen ? 'translate-x-0' : '-translate-x-full'
-      }`}>
-        <div className="pt-20 px-6">
-          <nav>
-            <ul className="space-y-6">
-              <li>
-                <Link 
-                  href="/about" 
-                  className="block text-lg font-medium hover:text-gray-300 transition-colors"
-                  onClick={closeMenu}
-                >
-                  FBK 소개
-                </Link>
-              </li>
-              <li>
-                <Link 
-                  href="/insight" 
-                  className="block text-lg font-medium hover:text-gray-300 transition-colors"
-                  onClick={closeMenu}
-                >
-                  인사이트
-                </Link>
-              </li>
-              <li>
-                <Link 
-                  href="/global" 
-                  className="block text-lg font-medium hover:text-gray-300 transition-colors"
-                  onClick={closeMenu}
-                >
-                  글로벌
-                </Link>
-              </li>
-              <li>
-                <Link 
-                  href="/interview" 
-                  className="block text-lg font-medium hover:text-gray-300 transition-colors"
-                  onClick={closeMenu}
-                >
-                  인터뷰
-                </Link>
-              </li>
-            </ul>
-          </nav>
+      {isMenuOpen && (
+        <div className="fixed top-0 left-0 h-full w-80 max-w-[85vw] bg-black text-white z-[9999] transform translate-x-0 transition-transform duration-300 ease-in-out shadow-2xl border-r border-gray-700">
+          {/* 메뉴 상단 헤더 영역 */}
+          <div className="flex items-center justify-between p-4 border-b border-gray-700">
+            <h2 className="text-lg font-semibold">FBK</h2>
+            <button 
+              onClick={closeMenu}
+              className="p-2 hover:bg-gray-800 rounded-full transition-colors"
+              aria-label="메뉴 닫기"
+            >
+              <svg 
+                className="w-6 h-6" 
+                fill="none" 
+                stroke="currentColor" 
+                viewBox="0 0 24 24"
+              >
+                <path 
+                  strokeLinecap="round" 
+                  strokeLinejoin="round" 
+                  strokeWidth={2} 
+                  d="M6 18L18 6M6 6l12 12" 
+                />
+              </svg>
+            </button>
+          </div>
+          
+          {/* 메뉴 내용 */}
+          <div className="pt-6 px-6">
+            <nav>
+              <ul className="space-y-6">
+                <li>
+                  <Link 
+                    href="/about" 
+                    className="block text-lg font-medium hover:text-gray-300 transition-colors"
+                    onClick={closeMenu}
+                  >
+                    FBK 소개
+                  </Link>
+                </li>
+                <li>
+                  <Link 
+                    href="/insight" 
+                    className="block text-lg font-medium hover:text-gray-300 transition-colors"
+                    onClick={closeMenu}
+                  >
+                    인사이트
+                  </Link>
+                </li>
+                <li>
+                  <Link 
+                    href="/global" 
+                    className="block text-lg font-medium hover:text-gray-300 transition-colors"
+                    onClick={closeMenu}
+                  >
+                    글로벌
+                  </Link>
+                </li>
+                <li>
+                  <Link 
+                    href="/interview" 
+                    className="block text-lg font-medium hover:text-gray-300 transition-colors"
+                    onClick={closeMenu}
+                  >
+                    인터뷰
+                  </Link>
+                </li>
+              </ul>
+            </nav>
+          </div>
         </div>
-      </div>
+      )}
 
       {/* 오버레이 */}
       {(isMenuOpen || (isLoggedIn && showUserMenu)) && (
         <div 
-          className="fixed inset-0 bg-black bg-opacity-50 z-30"
+          className="fixed inset-0 bg-black bg-opacity-50 z-[9998]"
           onClick={() => {
             closeMenu();
             setShowUserMenu(false);

@@ -97,7 +97,7 @@ export default async function Home() {
                   <h1 className="text-3xl lg:text-4xl text-black font-extrabold my-2 leading-tight group-hover:text-jj transition-colors">
                     {mainArticle.title}
                   </h1>
-                  <p className="text-gray-600" dangerouslySetInnerHTML={{ __html: mainArticle.intro }} />
+                  <div className="text-gray-600 text-sm" dangerouslySetInnerHTML={{ __html: mainArticle.intro }} />
                 </div>
                 <div>
                   <img src={mainArticle.image} alt={mainArticle.title || 'Main article image'} className="text-black w-full h-auto object-cover group-hover:opacity-90 transition-opacity" />
