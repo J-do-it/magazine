@@ -69,8 +69,10 @@ export default function SignInPage() {
         return;
       }
 
-      // 로그인 성공 시 메인 페이지로 이동
-      router.push('/');
+      // 로그인 성공 시 메인 페이지로 이동 (Header의 onAuthStateChange가 상태를 자동 업데이트)
+      if (data.user) {
+        router.push('/');
+      }
       
     } catch (error) {
       console.error('로그인 중 오류 발생:', error);

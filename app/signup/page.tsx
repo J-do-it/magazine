@@ -178,6 +178,22 @@ export default function SignUpPage() {
         return;
       }
 
+      // 회원가입 성공 후 핸드폰 번호를 Auth의 phone 필드에 저장
+      if (data.user) {
+        const { error: updateError } = await supabase.auth.updateUser({
+          phone: formattedPhone,
+          data: {
+            name: formData.name,
+            phone: formattedPhone
+          }
+        });
+
+        if (updateError) {
+          console.error('사용자 정보 업데이트 오류:', updateError);
+          // 업데이트 실패해도 회원가입은 성공했으므로 계속 진행
+        }
+      }
+
       // 회원가입 성공 시 로그인 페이지로 이동
       router.push('/signin');
       

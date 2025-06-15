@@ -6,17 +6,57 @@ import HamburgerIcon from './HamburgerIcon';
 import MyIcon from './My';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
+import { createClient } from '@/utils/supabase/client';
 
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [showUserMenu, setShowUserMenu] = useState(false);
+  const [userEmail, setUserEmail] = useState('');
   const router = useRouter();
+  const supabase = createClient();
 
   useEffect(() => {
-    // 로그인 상태 확인 (localStorage에서 체크)
-    const loginStatus = localStorage.getItem('isLoggedIn');
-    setIsLoggedIn(loginStatus === 'true');
-  }, []);
+    // 초기 로그인 상태 확인
+    const checkAuthState = async () => {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (session?.user) {
+        setIsLoggedIn(true);
+        setUserEmail(session.user.email || '');
+        localStorage.setItem('isLoggedIn', 'true');
+        localStorage.setItem('userEmail', session.user.email || '');
+      } else {
+        // Supabase 세션이 없으면 localStorage도 정리
+        setIsLoggedIn(false);
+        setUserEmail('');
+        localStorage.removeItem('isLoggedIn');
+        localStorage.removeItem('userEmail');
+      }
+    };
+
+    // 인증 상태 변경 감지
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(
+      async (event, session) => {
+        if (session?.user) {
+          setIsLoggedIn(true);
+          setUserEmail(session.user.email || '');
+          localStorage.setItem('isLoggedIn', 'true');
+          localStorage.setItem('userEmail', session.user.email || '');
+        } else {
+          setIsLoggedIn(false);
+          setUserEmail('');
+          localStorage.removeItem('isLoggedIn');
+          localStorage.removeItem('userEmail');
+        }
+      }
+    );
+
+    checkAuthState();
+
+    return () => {
+      subscription.unsubscribe();
+    };
+  }, [supabase.auth]);
 
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
@@ -26,11 +66,25 @@ const Header = () => {
     setIsMenuOpen(false);
   };
 
+  const toggleUserMenu = () => {
+    setShowUserMenu(!showUserMenu);
+  };
+
   const handleMyIconClick = () => {
     if (isLoggedIn) {
-      router.push('/my');
+      toggleUserMenu();
     } else {
       router.push('/signin');
+    }
+  };
+
+  const handleLogout = async () => {
+    try {
+      // Supabase에서 로그아웃 (onAuthStateChange가 자동으로 상태를 업데이트함)
+      await supabase.auth.signOut();
+      setShowUserMenu(false);
+    } catch (error) {
+      console.error('로그아웃 중 오류 발생:', error);
     }
   };
 
@@ -46,9 +100,36 @@ const Header = () => {
                 <Logo className="h-10" />
               </Link>
           </div>
-          <button className="p-2" onClick={handleMyIconClick}>
-            <MyIcon className="h-6 w-6" />
-          </button>
+          <div className="relative">
+            <button className="p-2" onClick={handleMyIconClick}>
+              <MyIcon className="h-6 w-6" />
+            </button>
+            
+            {/* 사용자 메뉴 드롭다운 */}
+            {isLoggedIn && showUserMenu && (
+              <div className="absolute right-0 top-full mt-2 w-64 bg-white text-black rounded-lg shadow-lg border">
+                <div className="p-4 border-b">
+                  <p className="text-sm text-gray-600">로그인됨</p>
+                  <p className="font-medium truncate">{userEmail}</p>
+                </div>
+                <div className="p-2">
+                  <Link 
+                    href="/my" 
+                    className="block px-4 py-2 text-sm hover:bg-gray-100 rounded"
+                    onClick={() => setShowUserMenu(false)}
+                  >
+                    마이페이지
+                  </Link>
+                  <button 
+                    onClick={handleLogout}
+                    className="w-full text-left px-4 py-2 text-sm hover:bg-gray-100 rounded text-red-600"
+                  >
+                    로그아웃
+                  </button>
+                </div>
+              </div>
+            )}
+          </div>
         </div>
       </header>
 
@@ -100,11 +181,14 @@ const Header = () => {
         </div>
       </div>
 
-      {/* 오버레이 (메뉴가 열렸을 때 배경 클릭으로 닫기) */}
-      {isMenuOpen && (
+      {/* 오버레이 */}
+      {(isMenuOpen || (isLoggedIn && showUserMenu)) && (
         <div 
           className="fixed inset-0 bg-black bg-opacity-50 z-30"
-          onClick={closeMenu}
+          onClick={() => {
+            closeMenu();
+            setShowUserMenu(false);
+          }}
         />
       )}
     </>
