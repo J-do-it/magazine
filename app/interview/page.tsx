@@ -13,11 +13,12 @@ export default async function TypePage() {
   
   const supabase = await createClient();
   
-  // 해당 type의 모든 아티클 가져오기
+  // 해당 type의 발행된 아티클만 가져오기
   const { data: articles, error } = await supabase
     .from('articles')
     .select('id, title, intro, image, created_at')
     .eq('type', typeTitle)
+    .eq('status', true)
     .order('created_at', { ascending: false });
 
   if (error) {

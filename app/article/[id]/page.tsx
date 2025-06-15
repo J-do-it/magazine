@@ -25,6 +25,7 @@ export default function ArticlePage() {
         .from('articles')
         .select('*')
         .eq('id', id)
+        .eq('status', true)
         .single()
 
       if (error || !data) {

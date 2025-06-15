@@ -41,10 +41,10 @@ const Footer = () => {
             <div className="text-right text-xl">
               <div className="text-sm mb-1">협업 및 제휴 문의</div>
               <a 
-                href="mailto:info@fbk.com" 
+                href="mailto:contact@fbk.com" 
                 className="text-white hover:text-gray-300 transition-colors underline"
               >
-                info@fbk.com
+                contact@fbk.com
               </a>
             </div>
         </div>

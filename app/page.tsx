@@ -41,10 +41,11 @@ const rightColumnArticles = [
 export default async function Home() {
   const supabase = await createClient();
   
-  // 최신 아티클 가져오기
+  // 최신 아티클 가져오기 (발행된 것만)
   const { data: latestArticle, error } = await supabase
     .from('articles')
     .select('id, title, intro, image')
+    .eq('status', true)
     .order('created_at', { ascending: false })
     .limit(1)
     .single();
@@ -69,6 +70,7 @@ export default async function Home() {
       .from('articles')
       .select('id, title, image')
       .eq('type', type)
+      .eq('status', true)
       .order('created_at', { ascending: false })
       .limit(3);
 
