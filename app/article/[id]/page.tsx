@@ -129,14 +129,16 @@ export default function ArticlePage() {
               </div>
             </div>
 
-            {/* 요약 */}
-            {article.intro && (
-              <div className="mb-8 p-3 border-l-4 border-jj">
-                <p className="text-gray-700 font-medium">
-                  {article.intro}
-                </p>
-              </div>
-            )}
+           {/* 요약 */}
+           {article.intro && (
+                <div className="mb-8 p-3 border-l-4 border-jj">
+                    <div 
+                    className="text-gray-900 font-light text-sm leading-relaxed"
+                    dangerouslySetInnerHTML={{
+                      __html: article.intro || ''
+                    }} />
+                </div>
+              )}
 
             {/* 본문 내용 */}
             <div
