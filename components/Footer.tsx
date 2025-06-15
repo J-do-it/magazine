@@ -14,11 +14,11 @@ const Footer = () => {
         <div className="flex flex-col lg:flex-row lg:justify-between lg:items-start gap-8 mb-8">
           {/* 로고 및 네비게이션 */}
           <div className="flex flex-col space-y-6">
-            <div className="text-sm">
-              © 2025 FBK
+            <div className="text-xl">
+              © 2025 FBK. All rights reserved.
             </div>
             
-            <nav className="flex flex-col sm:flex-row sm:flex-wrap gap-4 text-sm">
+            <nav className="flex flex-col sm:flex-wrap gap-4 text-sm sm:text-base">
               <Link href="/" className="hover:text-gray-300 transition-colors">
                 홈
               </Link>
@@ -38,7 +38,7 @@ const Footer = () => {
           </div>
 
             {/* 비즈니스 연락처 */}
-            <div className="text-right">
+            <div className="text-right text-xl">
               <div className="text-sm mb-1">협업 및 제휴 문의</div>
               <a 
                 href="mailto:info@fbk.com" 

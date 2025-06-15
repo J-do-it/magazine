@@ -82,9 +82,11 @@ export default async function TypePage() {
                   {article.title}
                 </h2>
                 {article.intro && (
-                  <p className="text-gray-600 mb-4 line-clamp-3">
-                    {article.intro}
-                  </p>
+                  <div 
+                    className="text-gray-600 mb-4 line-clamp-3 text-sm"
+                    dangerouslySetInnerHTML={{
+                      __html: article.intro || ''
+                    }} />
                 )}
                 <div className="flex justify-between items-center mt-auto">
                   <span className="text-gray-400 text-sm">
