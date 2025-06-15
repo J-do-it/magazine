@@ -145,7 +145,7 @@ export default function ArticlePage() {
               className="prose prose-lg max-w-none prose-gray
                 prose-h1:text-gray-900 prose-h1:font-bold
                 prose-h2:text-gray-900 prose-h2:font-bold prose-h2:p-3 prose-h2:border-l-4 prose-h2:border-jj prose-h2:tracking-tighter
-                prose-h3:text-gray-700 prose-h3:font-bold prose-h3:tracking-tighter
+                prose-h3:text-gray-700 prose-h3:font-bold prose-h3:tracking-tighter prose-h3:text-xl
                 prose-p:text-gray-700 prose-p:leading-relaxed
                 prose-a:text-blue-600 prose-a:no-underline hover:prose-a:underline
                 prose-strong:text-gray-900
