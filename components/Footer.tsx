@@ -54,13 +54,11 @@ const Footer = () => {
           {/* 사업자 정보 */}
           <div className="text-xs text-gray-400 space-y-2">
             <div className="flex flex-col sm:flex-row sm:space-x-6 space-y-1 sm:space-y-0">
-              <span>(주)FBK</span>
-              <span>사업자등록번호 | 123-45-67890</span>
-              <span>통신판매업신고번호 | 제 2025-서울마포-0000</span>
+              <span>(주)김유진아카데미</span>
+              <span>사업자등록번호 | 105-86-89416</span>
             </div>
             <div className="flex flex-col sm:flex-row sm:space-x-6 space-y-1 sm:space-y-0">
-              <span>대표번호 | 010-1234-5678</span>
-              <span>주소 | 000000 서울특별시 강남구 000000</span>
+              <span>주소 | 서울특별시 강남구 삼성로104길 17, 4층(삼성동, 대모빌딩)</span>
             </div>
           </div>
         </div>

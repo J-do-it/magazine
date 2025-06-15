@@ -18,7 +18,7 @@ export default function SignUpPage() {
   const router = useRouter();
   const supabase = createClient();
 
-  // 핸드폰 번호 형식 변환 함수
+  // 핸드폰 번호 형식 변환 함수 (디스플레이용)
   const formatPhoneNumber = (phone: string) => {
     // 숫자만 추출
     const numbersOnly = phone.replace(/\D/g, '');
@@ -30,6 +30,8 @@ export default function SignUpPage() {
     
     return phone;
   };
+
+
 
   // 실시간 유효성 검사
   const validateField = (name: string, value: string) => {
@@ -153,7 +155,7 @@ export default function SignUpPage() {
     setIsSubmitting(true);
 
     try {
-      // 핸드폰 번호 형식 변환
+      // 핸드폰 번호 형식 변환 (디스플레이용)
       const formattedPhone = formatPhoneNumber(formData.phone);
 
       // Supabase Auth를 사용한 회원가입
@@ -163,7 +165,7 @@ export default function SignUpPage() {
         options: {
           data: {
             name: formData.name,
-            phone: formattedPhone
+            phone: formattedPhone // 사용자 메타데이터에는 읽기 쉬운 형식으로 저장
           }
         }
       });
@@ -178,24 +180,36 @@ export default function SignUpPage() {
         return;
       }
 
-      // 회원가입 성공 후 핸드폰 번호를 Auth의 phone 필드에 저장
+      // 회원가입 성공 후 public.users 테이블에 사용자 정보 저장
       if (data.user) {
-        const { error: updateError } = await supabase.auth.updateUser({
-          phone: formattedPhone,
-          data: {
+        const { error: insertError } = await supabase
+          .from('users')
+          .insert({
+            id: data.user.id,
+            email: data.user.email,
             name: formData.name,
             phone: formattedPhone
-          }
-        });
+          });
 
-        if (updateError) {
-          console.error('사용자 정보 업데이트 오류:', updateError);
-          // 업데이트 실패해도 회원가입은 성공했으므로 계속 진행
+        if (insertError) {
+          console.error('사용자 정보 저장 오류:', insertError);
+          // 이미 존재하는 사용자일 수 있으므로 업데이트 시도
+          const { error: updateError } = await supabase
+            .from('users')
+            .update({
+              name: formData.name,
+              phone: formattedPhone
+            })
+            .eq('id', data.user.id);
+
+          if (updateError) {
+            console.error('사용자 정보 업데이트 오류:', updateError);
+          }
         }
       }
 
-      // 회원가입 성공 시 로그인 페이지로 이동
-      router.push('/signin');
+      // 회원가입 성공 시 홈으으로 이동
+      router.push('/');
       
     } catch (error) {
       console.error('회원가입 오류:', error);
